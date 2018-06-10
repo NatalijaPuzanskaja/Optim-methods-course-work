@@ -1,0 +1,14 @@
+B 2 C o m p i l a t i o n
+B 76 E x e c u t i o n
+I 77 m
+I 87 p
+B 115 Equation Listing    SOLVE kmeans Using MIQCP From line 65
+D 116 objective
+D 126 distances
+D 137 assign
+B 150 Column Listing      SOLVE kmeans Using MIQCP From line 65
+E 151 c
+E 228 z
+E 235 d
+E 254 x
+B 275 Model Statistics    SOLVE kmeans Using MIQCP From line 65

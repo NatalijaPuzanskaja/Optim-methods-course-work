@@ -1,0 +1,43 @@
+# ==========================================================
+# = Solver Results                                         =
+# ==========================================================
+# ----------------------------------------------------------
+#   Problem Information
+# ----------------------------------------------------------
+Problem: 
+- Lower bound: -inf
+  Upper bound: inf
+  Number of objectives: 1
+  Number of constraints: 6
+  Number of variables: 9
+  Sense: unknown
+# ----------------------------------------------------------
+#   Solver Information
+# ----------------------------------------------------------
+Solver: 
+- Status: ok
+  Message: CPLEX 12.7.0.0\x3a optimal solution; objective 3; No basis.
+  Termination condition: optimal
+  Id: 0
+# ----------------------------------------------------------
+#   Solution Information
+# ----------------------------------------------------------
+Solution: 
+- number of solutions: 1
+  number of solutions displayed: 1
+- Gap: None
+  Status: optimal
+  Message: CPLEX 12.7.0.0\x3a optimal solution; objective 3; No basis.
+  Objective:
+    obj:
+      Value: 3
+  Variable:
+    b:
+      Value: 1
+    ksis[4]:
+      Value: 1
+    ksis[5]:
+      Value: 1
+    ksis[6]:
+      Value: 1
+  Constraint: No values

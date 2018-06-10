@@ -1,0 +1,43 @@
+# ==========================================================
+# = Solver Results                                         =
+# ==========================================================
+# ----------------------------------------------------------
+#   Problem Information
+# ----------------------------------------------------------
+Problem: 
+- Lower bound: -inf
+  Upper bound: inf
+  Number of objectives: 1
+  Number of constraints: 6
+  Number of variables: 9
+  Sense: unknown
+# ----------------------------------------------------------
+#   Solver Information
+# ----------------------------------------------------------
+Solver: 
+- Status: ok
+  Message: CBC 2.9.9 optimal, objective -1199999997; 0 nodes, 0 iterations, 0 seconds
+  Termination condition: optimal
+  Id: 0
+# ----------------------------------------------------------
+#   Solution Information
+# ----------------------------------------------------------
+Solution: 
+- number of solutions: 1
+  number of solutions displayed: 1
+- Gap: None
+  Status: optimal
+  Message: CBC 2.9.9 optimal, objective -1199999997; 0 nodes, 0 iterations, 0 seconds
+  Objective:
+    obj:
+      Value: 2.9999999999999996
+  Variable:
+    b:
+      Value: 0.999999999999999
+    ksis[4]:
+      Value: 0.9999999999999999
+    ksis[5]:
+      Value: 0.9999999999999999
+    ksis[6]:
+      Value: 0.9999999999999999
+  Constraint: No values

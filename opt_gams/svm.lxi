@@ -1,0 +1,21 @@
+B 2 C o m p i l a t i o n
+B 73 Equation Listing    SOLVE svm Using QCP From line 65
+D 74 positiveConstraints
+D 86 negativeConstraints
+D 97 objective
+B 104 Column Listing      SOLVE svm Using QCP From line 65
+E 105 m
+E 134 b
+E 150 z
+E 157 c
+E 176 d
+B 197 Model Statistics    SOLVE svm Using QCP From line 65
+B 215 Solution Report     SOLVE svm Using QCP From line 65
+F 261 positiveConstraints
+F 271 negativeConstraints
+F 279 objective
+G 280 m
+G 287 b
+G 291 z
+G 292 c
+G 302 d

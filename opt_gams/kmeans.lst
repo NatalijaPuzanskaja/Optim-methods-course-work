@@ -1,0 +1,313 @@
+GAMS 25.1.1  r66732 Released May 19, 2018 DEX-DEG x86 64bit/Mac OS X - 06/10/18 17:48:12 Page 1
+G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
+C o m p i l a t i o n
+
+
+       
+        K-means clustering as optimization model
+       
+   6   
+   7  option seed=101;
+   8   
+   9  sets
+  10     k  'clusters' /k1*k3/
+  11     i  'data points' /i1*i20/
+  12     xy 'coordinates of points' /x,y/
+  13  ;
+  14  parameter
+  15     m(k,xy) 'random clusters to generate data points'
+  16     p(i,*)  'data points'
+  17  ;
+  18   
+  19  *------------------------------------------------
+  20  * generate random data
+  21  * points are around some clusters
+  22  *------------------------------------------------
+  23  m(k,xy) = uniform(0,4);
+  24  p(i,'cluster') = uniformint(1,card(k));
+  25  p(i,xy) = sum(k$(p(i,'cluster')=ord(k)),m(k,xy)) + uniform(0,1);
+  26  display m,p;
+  27   
+  28   
+  29  *------------------------------------------------
+  30  * Optimization mdel
+  31  *------------------------------------------------
+  32   
+  33  variables
+  34    c(k,xy) 'clusters'
+  35    z       'objective'
+  36    d(i,k)  'distance'
+  37  ;
+  38  binary variables
+  39    x(i,k) 'assign points to clusters'
+  40  ;
+  41   
+  42  equations
+  43     objective
+  44     distances(i,k)
+  45     assign(i)
+  46  ;
+  47   
+  48  objective..       z =e= sum((i,k), x(i,k)*d(i,k));
+  49  distances(i,k)..  d(i,k) =e= sum(xy, sqr(p(i,xy)-c(k,xy)) );
+  50  assign(i)..       sum(k, x(i,k)) =e= 1;
+  51   
+  52   
+  53  *------------------------------------------------
+  54  * Get some good bounds
+  55  *------------------------------------------------
+  56   
+  57  d.lo(i,k) = 0;
+  58  alias (i,j);
+  59  d.up(i,k) = smax(j, sum(xy, sqr(p(i,xy)-p(j,xy))));
+  60  c.lo(k,xy) = smin(i, p(i,xy));
+  61  c.up(k,xy) = smax(i, p(i,xy));
+  62   
+  63   
+  64  model kmeans /all/;
+  65  option miqcp=baron;
+  66  option optcr=0;
+  67  solve kmeans minimizing z using miqcp;
+  68   
+  69  option x:0;
+  70  display c.l,x.l;
+
+
+COMPILATION TIME     =        0.001 SECONDS      3 MB  25.1.1 r66732 DEX-DEG
+GAMS 25.1.1  r66732 Released May 19, 2018 DEX-DEG x86 64bit/Mac OS X - 06/10/18 17:48:12 Page 2
+G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
+E x e c u t i o n
+
+
+----     26 PARAMETER m  random clusters to generate data points
+
+             x           y
+
+k1       0.060       3.452
+k2       2.376       2.806
+k3       1.987       0.111
+
+
+----     26 PARAMETER p  data points
+
+              x           y     cluster
+
+i1        2.175       0.687       3.000
+i2        2.668       0.626       3.000
+i3        2.414       3.176       2.000
+i4        3.043       3.773       2.000
+i5        2.530       0.357       3.000
+i6        1.992       0.410       3.000
+i7        2.959       1.015       3.000
+i8        0.957       3.611       1.000
+i9        2.792       0.759       3.000
+i10       2.023       0.954       3.000
+i11       0.679       3.886       1.000
+i12       2.834       0.517       3.000
+i13       2.423       3.558       2.000
+i14       0.873       4.326       1.000
+i15       3.114       3.706       2.000
+i16       2.421       2.970       2.000
+i17       2.517       0.231       3.000
+i18       0.741       3.809       1.000
+i19       0.644       4.048       1.000
+i20       2.440       3.681       2.000
+
+GAMS 25.1.1  r66732 Released May 19, 2018 DEX-DEG x86 64bit/Mac OS X - 06/10/18 17:48:12 Page 3
+G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
+Equation Listing    SOLVE kmeans Using MIQCP From line 67
+
+
+---- objective  =E=  
+
+objective..  z + (0)*d(i1,k1) + (0)*d(i1,k2) + (0)*d(i1,k3) + (0)*d(i2,k1) + (0)*d(i2,k2) + (0)*d(i2,k3) + (0)*d(i3,k1) + (0)*d(i3,k2) + (0)*d(i3,k3) + (0)*d(i4,k1) + (0)*d(i4,k2) + (0)*d(i4,k3) + (0)*d(i5,k1) + (0)*d(i5,k2) + (0)*d(i5,k3) + (0)*d(i6,k1)
+     
+      + (0)*d(i6,k2) + (0)*d(i6,k3) + (0)*d(i7,k1) + (0)*d(i7,k2) + (0)*d(i7,k3) + (0)*d(i8,k1) + (0)*d(i8,k2) + (0)*d(i8,k3) + (0)*d(i9,k1) + (0)*d(i9,k2) + (0)*d(i9,k3) + (0)*d(i10,k1) + (0)*d(i10,k2) + (0)*d(i10,k3) + (0)*d(i11,k1) + (0)*d(i11,k2)
+     
+      + (0)*d(i11,k3) + (0)*d(i12,k1) + (0)*d(i12,k2) + (0)*d(i12,k3) + (0)*d(i13,k1) + (0)*d(i13,k2) + (0)*d(i13,k3) + (0)*d(i14,k1) + (0)*d(i14,k2) + (0)*d(i14,k3) + (0)*d(i15,k1) + (0)*d(i15,k2) + (0)*d(i15,k3) + (0)*d(i16,k1) + (0)*d(i16,k2)
+     
+      + (0)*d(i16,k3) + (0)*d(i17,k1) + (0)*d(i17,k2) + (0)*d(i17,k3) + (0)*d(i18,k1) + (0)*d(i18,k2) + (0)*d(i18,k3) + (0)*d(i19,k1) + (0)*d(i19,k2) + (0)*d(i19,k3) + (0)*d(i20,k1) + (0)*d(i20,k2) + (0)*d(i20,k3) + (0)*x(i1,k1) + (0)*x(i1,k2)
+     
+      + (0)*x(i1,k3) + (0)*x(i2,k1) + (0)*x(i2,k2) + (0)*x(i2,k3) + (0)*x(i3,k1) + (0)*x(i3,k2) + (0)*x(i3,k3) + (0)*x(i4,k1) + (0)*x(i4,k2) + (0)*x(i4,k3) + (0)*x(i5,k1) + (0)*x(i5,k2) + (0)*x(i5,k3) + (0)*x(i6,k1) + (0)*x(i6,k2) + (0)*x(i6,k3)
+     
+      + (0)*x(i7,k1) + (0)*x(i7,k2) + (0)*x(i7,k3) + (0)*x(i8,k1) + (0)*x(i8,k2) + (0)*x(i8,k3) + (0)*x(i9,k1) + (0)*x(i9,k2) + (0)*x(i9,k3) + (0)*x(i10,k1) + (0)*x(i10,k2) + (0)*x(i10,k3) + (0)*x(i11,k1) + (0)*x(i11,k2) + (0)*x(i11,k3) + (0)*x(i12,k1)
+     
+      + (0)*x(i12,k2) + (0)*x(i12,k3) + (0)*x(i13,k1) + (0)*x(i13,k2) + (0)*x(i13,k3) + (0)*x(i14,k1) + (0)*x(i14,k2) + (0)*x(i14,k3) + (0)*x(i15,k1) + (0)*x(i15,k2) + (0)*x(i15,k3) + (0)*x(i16,k1) + (0)*x(i16,k2) + (0)*x(i16,k3) + (0)*x(i17,k1)
+     
+      + (0)*x(i17,k2) + (0)*x(i17,k3) + (0)*x(i18,k1) + (0)*x(i18,k2) + (0)*x(i18,k3) + (0)*x(i19,k1) + (0)*x(i19,k2) + (0)*x(i19,k3) + (0)*x(i20,k1) + (0)*x(i20,k2) + (0)*x(i20,k3) =E= 0 ; (LHS = 0)
+     
+
+---- distances  =E=  
+
+distances(i1,k1)..  (3.06036485)*c(k1,x) + (0.912329076)*c(k1,y) + d(i1,k1) =E= 0 ; (LHS = -2.54954433950763, INFES = 2.54954433950763 ****)
+     
+distances(i1,k2)..  (3.06036485)*c(k2,x) + (0.912329076)*c(k2,y) + d(i1,k2) =E= 0 ; (LHS = -2.54954433950763, INFES = 2.54954433950763 ****)
+     
+distances(i1,k3)..  (3.06036485)*c(k3,x) + (0.912329076)*c(k3,y) + d(i1,k3) =E= 0 ; (LHS = -2.54954433950763, INFES = 2.54954433950763 ****)
+     
+REMAINING 57 ENTRIES SKIPPED
+
+
+---- assign  =E=  
+
+assign(i1)..  x(i1,k1) + x(i1,k2) + x(i1,k3) =E= 1 ; (LHS = 0, INFES = 1 ****)
+     
+assign(i2)..  x(i2,k1) + x(i2,k2) + x(i2,k3) =E= 1 ; (LHS = 0, INFES = 1 ****)
+     
+assign(i3)..  x(i3,k1) + x(i3,k2) + x(i3,k3) =E= 1 ; (LHS = 0, INFES = 1 ****)
+     
+REMAINING 17 ENTRIES SKIPPED
+
+GAMS 25.1.1  r66732 Released May 19, 2018 DEX-DEG x86 64bit/Mac OS X - 06/10/18 17:48:12 Page 4
+G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
+Column Listing      SOLVE kmeans Using MIQCP From line 67
+
+
+---- c  clusters
+
+c(k1,x)
+                (.LO, .L, .UP, .M = 0.644431061, 0.644431061, 3.114429888, 0)
+       (3.0604) distances(i1,k1)
+       (4.0479) distances(i2,k1)
+       (3.5395) distances(i3,k1)
+       (4.7975) distances(i4,k1)
+       (3.7705) distances(i5,k1)
+       (2.6945) distances(i6,k1)
+       (4.6287) distances(i7,k1)
+       (0.6243) distances(i8,k1)
+       (4.2946) distances(i9,k1)
+       (2.7573) distances(i10,k1)
+       (0.07)   distances(i11,k1)
+       (4.3797) distances(i12,k1)
+       (3.5572) distances(i13,k1)
+       (0.4573) distances(i14,k1)
+       (4.94)   distances(i15,k1)
+       (3.5533) distances(i16,k1)
+       (3.7444) distances(i17,k1)
+       (0.1929) distances(i18,k1)
+       (0)      distances(i19,k1)
+       (3.5909) distances(i20,k1)
+        0       (OLD LEVEL ****)
+
+c(k1,y)
+                (.LO, .L, .UP, .M = 0.23089563, 0.23089563, 4.32582127, 0)
+       (0.9123) distances(i1,k1)
+       (0.7911) distances(i2,k1)
+       (5.8894) distances(i3,k1)
+       (7.0836) distances(i4,k1)
+       (0.253)  distances(i5,k1)
+       (0.3582) distances(i6,k1)
+       (1.5684) distances(i7,k1)
+       (6.7606) distances(i8,k1)
+       (1.0563) distances(i9,k1)
+       (1.4461) distances(i10,k1)
+       (7.3111) distances(i11,k1)
+       (0.5726) distances(i12,k1)
+       (6.655)  distances(i13,k1)
+       (8.1899) distances(i14,k1)
+       (6.9509) distances(i15,k1)
+       (5.4775) distances(i16,k1)
+       (0)      distances(i17,k1)
+       (7.1553) distances(i18,k1)
+       (7.6338) distances(i19,k1)
+       (6.9)    distances(i20,k1)
+        0       (OLD LEVEL ****)
+
+c(k2,x)
+                (.LO, .L, .UP, .M = 0.644431061, 0.644431061, 3.114429888, 0)
+       (3.0604) distances(i1,k2)
+       (4.0479) distances(i2,k2)
+       (3.5395) distances(i3,k2)
+       (4.7975) distances(i4,k2)
+       (3.7705) distances(i5,k2)
+       (2.6945) distances(i6,k2)
+       (4.6287) distances(i7,k2)
+       (0.6243) distances(i8,k2)
+       (4.2946) distances(i9,k2)
+       (2.7573) distances(i10,k2)
+       (0.07)   distances(i11,k2)
+       (4.3797) distances(i12,k2)
+       (3.5572) distances(i13,k2)
+       (0.4573) distances(i14,k2)
+       (4.94)   distances(i15,k2)
+       (3.5533) distances(i16,k2)
+       (3.7444) distances(i17,k2)
+       (0.1929) distances(i18,k2)
+       (0)      distances(i19,k2)
+       (3.5909) distances(i20,k2)
+        0       (OLD LEVEL ****)
+
+REMAINING 3 ENTRIES SKIPPED
+
+---- z  objective
+
+z
+                (.LO, .L, .UP, .M = -INF, 0, +INF, 0)
+        1       objective
+
+
+---- d  distance
+
+d(i1,k1)
+                (.LO, .L, .UP, .M = 0, 0, 14.9345304699957, 0)
+       (0)      objective
+        1       distances(i1,k1)
+
+d(i1,k2)
+                (.LO, .L, .UP, .M = 0, 0, 14.9345304699957, 0)
+       (0)      objective
+        1       distances(i1,k2)
+
+d(i1,k3)
+                (.LO, .L, .UP, .M = 0, 0, 14.9345304699957, 0)
+       (0)      objective
+        1       distances(i1,k3)
+
+REMAINING 57 ENTRIES SKIPPED
+
+---- x  assign points to clusters
+
+x(i1,k1)
+                (.LO, .L, .UP, .M = 0, 0, 1, 0)
+       (0)      objective
+        1       assign(i1)
+
+x(i1,k2)
+                (.LO, .L, .UP, .M = 0, 0, 1, 0)
+       (0)      objective
+        1       assign(i1)
+
+x(i1,k3)
+                (.LO, .L, .UP, .M = 0, 0, 1, 0)
+       (0)      objective
+        1       assign(i1)
+
+REMAINING 57 ENTRIES SKIPPED
+GAMS 25.1.1  r66732 Released May 19, 2018 DEX-DEG x86 64bit/Mac OS X - 06/10/18 17:48:12 Page 5
+G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
+Model Statistics    SOLVE kmeans Using MIQCP From line 67
+
+
+MODEL STATISTICS
+
+BLOCKS OF EQUATIONS           3     SINGLE EQUATIONS           81
+BLOCKS OF VARIABLES           4     SINGLE VARIABLES          127  6 projected
+NON ZERO ELEMENTS           361     NON LINEAR N-Z            240
+DERIVATIVE POOL              20     CONSTANT POOL              56
+CODE LENGTH                 782     DISCRETE VARIABLES         60
+
+
+
+**** THE MODEL EXCEEDS THE DEMO LIMITS
+**** MAX MATRIX ROWS          300
+**** MAX MATRIX COLUMNS       300
+**** MAX NON ZERO ELEMENTS   2000
+**** MAX NON LINEAR N-Z      1000
+**** MAX DISCRETE VARIABLES    50
+**** Terminated due to a licensing error
+
+     GAMS Development Corporation, USA              G871201/0000CA-ANY
+     Free Demo, +1 202-342-0180, support@gams.com, www.gams.com       
+     10519141000S                                                   00
+     01234567000000                                                   
+     DC0000       Ref: Generated by Base            A Demo            

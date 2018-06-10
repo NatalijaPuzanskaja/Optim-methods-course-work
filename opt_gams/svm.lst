@@ -1,0 +1,332 @@
+GAMS 25.1.1  r66732 Released May 19, 2018 DEX-DEG x86 64bit/Mac OS X - 06/10/18 18:26:57 Page 1
+G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
+C o m p i l a t i o n
+
+
+       
+        SVM clustering as optimization model
+        
+   6   
+   7  scalars largeWeightsPenaltyParameter 'penalty parameter' /0.1/
+   8      nPositivePoints 'n points 1 cluster ' /5/
+   9      nNegativePoints 'n points 2 cluster' /5/
+  10  ;
+  11   
+  12  sets
+  13      dimensions  /d1, d2/
+  14      positivePointNs     /p1*p5/
+  15      negativePointNs     /n1*n5/
+  16  ;
+  17   
+  18  table positivePoints(positivePointNs, dimensions)
+  19          d1      d2
+  20  p1      2       0
+  21  p2      0       3
+  22  p3      1       3
+  23  p4      0       4
+  24  p5      1       4
+  25  ;
+  26   
+  27  table negativePoints(negativePointNs, dimensions)
+  28          d1      d2
+  29  n1      1       1
+  30  n2      2       1
+  31  n3      2       2
+  32  n4      3       1
+  33  n5      3       2
+  34  ;
+  35   
+  36  free variables
+  37      m(dimensions)
+  38       b
+  39       z
+  40  ;
+  41   
+  42  positive variables
+  43       c(positivePointNs)
+  44       d(negativePointNs)
+  45  ;
+  46   
+  47  equations
+  48       positiveConstraints(positivePointNs)
+  49       negativeConstraints(negativePointNs)
+  50       objective
+  51  ;
+  52   
+  53  positiveConstraints(positivePointNs) ..
+  54      sum(dimensions, positivePoints(positivePointNs, dimensions) * m(dimensions)) - b + c(positivePointNs) =g= 1;
+  55   
+  56  negativeConstraints(negativePointNs) ..
+  57       - sum(dimensions, negativePoints(negativePointNs, dimensions) * m(dimensions)) + b + d(negativePointNs) =g= 1;
+  58   
+  59  objective ..
+  60      z =e= 1 / nPositivePoints * sum(positivePointNs, c(positivePointNs)) + 1 / nNegativePoints * sum(negativePointNs, d(negativePointNs)) +
+  61      largeWeightsPenaltyParameter / 2 * sum(dimensions, m(dimensions) * m(dimensions))
+  62   
+  63  model svm /all/;
+  64   
+  65  solve svm minimizing z using qcp;
+
+
+COMPILATION TIME     =        0.001 SECONDS      3 MB  25.1.1 r66732 DEX-DEG
+GAMS 25.1.1  r66732 Released May 19, 2018 DEX-DEG x86 64bit/Mac OS X - 06/10/18 18:26:57 Page 2
+G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
+Equation Listing    SOLVE svm Using QCP From line 65
+
+
+---- positiveConstraints  =G=  
+
+positiveConstraints(p1)..  2*m(d1) - b + c(p1) =G= 1 ; (LHS = 0, INFES = 1 ****)
+     
+positiveConstraints(p2)..  3*m(d2) - b + c(p2) =G= 1 ; (LHS = 0, INFES = 1 ****)
+     
+positiveConstraints(p3)..  m(d1) + 3*m(d2) - b + c(p3) =G= 1 ; (LHS = 0, INFES = 1 ****)
+     
+REMAINING 2 ENTRIES SKIPPED
+
+
+---- negativeConstraints  =G=  
+
+negativeConstraints(n1)..  - m(d1) - m(d2) + b + d(n1) =G= 1 ; (LHS = 0, INFES = 1 ****)
+     
+negativeConstraints(n2)..  - 2*m(d1) - m(d2) + b + d(n2) =G= 1 ; (LHS = 0, INFES = 1 ****)
+     
+negativeConstraints(n3)..  - 2*m(d1) - 2*m(d2) + b + d(n3) =G= 1 ; (LHS = 0, INFES = 1 ****)
+     
+REMAINING 2 ENTRIES SKIPPED
+
+
+---- objective  =E=  
+
+objective..  (0)*m(d1) + (0)*m(d2) + z - 0.2*c(p1) - 0.2*c(p2) - 0.2*c(p3) - 0.2*c(p4) - 0.2*c(p5) - 0.2*d(n1) - 0.2*d(n2) - 0.2*d(n3) - 0.2*d(n4) - 0.2*d(n5) =E= 0 ; (LHS = 0)
+     
+GAMS 25.1.1  r66732 Released May 19, 2018 DEX-DEG x86 64bit/Mac OS X - 06/10/18 18:26:57 Page 3
+G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
+Column Listing      SOLVE svm Using QCP From line 65
+
+
+---- m  
+
+m(d1)
+                (.LO, .L, .UP, .M = -INF, 0, +INF, 0)
+        2       positiveConstraints(p1)
+        1       positiveConstraints(p3)
+        1       positiveConstraints(p5)
+       -1       negativeConstraints(n1)
+       -2       negativeConstraints(n2)
+       -2       negativeConstraints(n3)
+       -3       negativeConstraints(n4)
+       -3       negativeConstraints(n5)
+       (0)      objective
+
+m(d2)
+                (.LO, .L, .UP, .M = -INF, 0, +INF, 0)
+        3       positiveConstraints(p2)
+        3       positiveConstraints(p3)
+        4       positiveConstraints(p4)
+        4       positiveConstraints(p5)
+       -1       negativeConstraints(n1)
+       -1       negativeConstraints(n2)
+       -2       negativeConstraints(n3)
+       -1       negativeConstraints(n4)
+       -2       negativeConstraints(n5)
+       (0)      objective
+
+
+---- b  
+
+b
+                (.LO, .L, .UP, .M = -INF, 0, +INF, 0)
+       -1       positiveConstraints(p1)
+       -1       positiveConstraints(p2)
+       -1       positiveConstraints(p3)
+       -1       positiveConstraints(p4)
+       -1       positiveConstraints(p5)
+        1       negativeConstraints(n1)
+        1       negativeConstraints(n2)
+        1       negativeConstraints(n3)
+        1       negativeConstraints(n4)
+        1       negativeConstraints(n5)
+
+
+---- z  
+
+z
+                (.LO, .L, .UP, .M = -INF, 0, +INF, 0)
+        1       objective
+
+
+---- c  
+
+c(p1)
+                (.LO, .L, .UP, .M = 0, 0, +INF, 0)
+        1       positiveConstraints(p1)
+       -0.2     objective
+
+c(p2)
+                (.LO, .L, .UP, .M = 0, 0, +INF, 0)
+        1       positiveConstraints(p2)
+       -0.2     objective
+
+c(p3)
+                (.LO, .L, .UP, .M = 0, 0, +INF, 0)
+        1       positiveConstraints(p3)
+       -0.2     objective
+
+REMAINING 2 ENTRIES SKIPPED
+
+---- d  
+
+d(n1)
+                (.LO, .L, .UP, .M = 0, 0, +INF, 0)
+        1       negativeConstraints(n1)
+       -0.2     objective
+
+d(n2)
+                (.LO, .L, .UP, .M = 0, 0, +INF, 0)
+        1       negativeConstraints(n2)
+       -0.2     objective
+
+d(n3)
+                (.LO, .L, .UP, .M = 0, 0, +INF, 0)
+        1       negativeConstraints(n3)
+       -0.2     objective
+
+REMAINING 2 ENTRIES SKIPPED
+GAMS 25.1.1  r66732 Released May 19, 2018 DEX-DEG x86 64bit/Mac OS X - 06/10/18 18:26:57 Page 4
+G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
+Model Statistics    SOLVE svm Using QCP From line 65
+
+
+MODEL STATISTICS
+
+BLOCKS OF EQUATIONS           3     SINGLE EQUATIONS           11
+BLOCKS OF VARIABLES           5     SINGLE VARIABLES           14
+NON ZERO ELEMENTS            50     NON LINEAR N-Z              2
+DERIVATIVE POOL              20     CONSTANT POOL              17
+CODE LENGTH                  10
+
+
+GENERATION TIME      =        0.003 SECONDS      4 MB  25.1.1 r66732 DEX-DEG
+
+
+EXECUTION TIME       =        0.003 SECONDS      4 MB  25.1.1 r66732 DEX-DEG
+GAMS 25.1.1  r66732 Released May 19, 2018 DEX-DEG x86 64bit/Mac OS X - 06/10/18 18:26:57 Page 5
+G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
+Solution Report     SOLVE svm Using QCP From line 65
+
+
+               S O L V E      S U M M A R Y
+
+     MODEL   svm                 OBJECTIVE  z
+     TYPE    QCP                 DIRECTION  MINIMIZE
+     SOLVER  CONOPT              FROM LINE  65
+
+**** SOLVER STATUS     1 Normal Completion         
+**** MODEL STATUS      2 Locally Optimal           
+**** OBJECTIVE VALUE                0.8250
+
+ RESOURCE USAGE, LIMIT          0.014      1000.000
+ ITERATION COUNT, LIMIT         9    2000000000
+ EVALUATION ERRORS              0             0
+CONOPT 3         25.1.1 r66732 Released May 19, 2018 DEG x86 64bit/Mac OS X   
+ 
+ 
+    C O N O P T 3   version 3.17I
+    Copyright (C)   ARKI Consulting and Development A/S
+                    Bagsvaerdvej 246 A
+                    DK-2880 Bagsvaerd, Denmark
+ 
+ 
+    The model has 14 variables and 11 constraints
+    with 50 Jacobian elements, 2 of which are nonlinear.
+    The Hessian of the Lagrangian has 2 elements on the diagonal,
+    0 elements below the diagonal, and 2 nonlinear variables.
+ 
+                   Pre-triangular equations:   0
+                   Post-triangular equations:  1
+ 
+ 
+ ** Optimal solution. There are no superbasic variables.
+ 
+ 
+ CONOPT time Total                            0.012 seconds
+   of which: Function evaluations             0.001 =  8.3%
+             1st Derivative evaluations       0.000 =  0.0%
+ 
+
+---- EQU positiveConstraints  
+
+          LOWER          LEVEL          UPPER         MARGINAL
+
+p1         1.0000         1.0000        +INF            0.2000      
+p2         1.0000         1.0000        +INF            0.0250      
+p3         1.0000         1.0000        +INF            0.2000      
+p4         1.0000         1.5000        +INF             .          
+p5         1.0000         1.0000        +INF            EPS         
+
+---- EQU negativeConstraints  
+
+          LOWER          LEVEL          UPPER         MARGINAL
+
+n1         1.0000         1.0000        +INF            0.2000      
+n2         1.0000         1.0000        +INF            0.0250      
+n3         1.0000         1.0000        +INF            0.2000      
+n4         1.0000         1.5000        +INF             .          
+n5         1.0000         1.0000        +INF             .          
+
+                           LOWER          LEVEL          UPPER         MARGINAL
+
+---- EQU objective           .              .              .             1.0000      
+
+---- VAR m  
+
+          LOWER          LEVEL          UPPER         MARGINAL
+
+d1        -INF           -0.5000        +INF             .          
+d2        -INF            0.5000        +INF             .          
+
+                           LOWER          LEVEL          UPPER         MARGINAL
+
+---- VAR b                 -INF            0.5000        +INF             .          
+---- VAR z                 -INF            0.8250        +INF             .          
+
+---- VAR c  
+
+          LOWER          LEVEL          UPPER         MARGINAL
+
+p1          .             2.5000        +INF             .          
+p2          .              .            +INF            0.1750      
+p3          .             0.5000        +INF             .          
+p4          .              .            +INF            0.2000      
+p5          .              .            +INF            0.2000      
+
+---- VAR d  
+
+          LOWER          LEVEL          UPPER         MARGINAL
+
+n1          .             0.5000        +INF             .          
+n2          .              .            +INF            0.1750      
+n3          .             0.5000        +INF             .          
+n4          .              .            +INF            0.2000      
+n5          .              .            +INF            0.2000      
+
+
+**** REPORT SUMMARY :        0     NONOPT
+                             0 INFEASIBLE
+                             0  UNBOUNDED
+                             0     ERRORS
+                             1  PROJECTED
+
+
+EXECUTION TIME       =        0.001 SECONDS      2 MB  25.1.1 r66732 DEX-DEG
+
+
+USER: GAMS Development Corporation, USA              G871201/0000CA-ANY
+      Free Demo, +1 202-342-0180, support@gams.com, www.gams.com DC0000
+
+
+**** FILE SUMMARY
+
+Input      /Users/natalijapuzanskaja/VU/Git/optim-methods-course-work/opt_gams/svm.gms
+Output     /Users/natalijapuzanskaja/VU/Git/optim-methods-course-work/opt_gams/svm.lst

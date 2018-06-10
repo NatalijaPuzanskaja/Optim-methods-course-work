@@ -1,0 +1,5 @@
+pyomo solve opt_pyomo/svm.py opt_pyomo/svm.dat --solver=couenne --solver-manager=neos
+WARNING: Failed to create solver with name 'couenne': Failed to set executable
+    for solver asl. File with name=couenne either does not exist or it is not
+    executable. To skip this validation, call set_executable with
+    validate=False.

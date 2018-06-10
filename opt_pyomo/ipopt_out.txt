@@ -1,0 +1,23 @@
+pyomo solve opt_pyomo/svm.py opt_pyomo/svm.dat --solver=ipopt --solver-manager=neos
+[    0.00] Setting up Pyomo environment
+[    0.00] Applying Pyomo preprocessing actions
+[    0.00] Creating model
+[    0.02] Applying solver
+Job 6114161 submitted to NEOS, password='PKGsWtAy'
+Check the following URL for progress report :
+https://www.neos-server.org/neos/cgi-bin/nph-neos-solver.cgi?admin=results&jobnumber=6114161&pass=PKGsWtAy
+Job 6114161 dispatched
+password: PKGsWtAy
+---------- Begin Solver Output -----------
+Condor submit: 'neos.submit'
+Condor submit: 'watchdog.submit'
+Job submitted to NEOS HTCondor pool.
+[   16.63] Processing results
+    Number of solutions: 1
+    Solution Information
+      Gap: None
+      Status: optimal
+      Function Value: 2.9999999775075272
+    Solver results file: results.yml
+[   16.64] Applying Pyomo postprocessing actions
+[   16.64] Pyomo Finished

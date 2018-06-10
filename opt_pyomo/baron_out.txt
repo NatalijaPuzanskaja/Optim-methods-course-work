@@ -1,0 +1,11 @@
+pyomo solve opt_pyomo/svm.py opt_pyomo/svm.dat --solver=baron --solver-manager=neos
+[    0.00] Setting up Pyomo environment
+[    0.00] Applying Pyomo preprocessing actions
+[    0.00] Creating model
+[    0.02] Applying solver
+[    0.76] Pyomo Finished
+ERROR: Unexpected exception while running model:
+        Solver 'baron' is not recognized by NEOS. Solver names recognized:
+    ['bonmin', 'cbc', 'conopt', 'couenne', 'cplex', 'filmint', 'filter',
+    'ipopt', 'knitro', 'l-bfgs-b', 'lancelot', 'loqo', 'minlp', 'minos',
+    'minto', 'mosek', 'ooqp', 'path', 'snopt']

@@ -20,7 +20,7 @@ def obj_expression(model):
     return sum(model.ksis[i] for i in model.I) + model.l * model.n * sum(model.w[j]**2 for j in model.J)
 
 
-model.OBJ = Objective(rule=obj_expression, sense=minimize)
+model.obj = Objective(rule=obj_expression, sense=minimize)
 
 
 def constI(model, i):

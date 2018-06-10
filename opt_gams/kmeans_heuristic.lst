@@ -1,0 +1,254 @@
+GAMS 25.1.1  r66732 Released May 19, 2018 DEX-DEG x86 64bit/Mac OS X - 06/10/18 13:33:43 Page 1
+G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
+C o m p i l a t i o n
+
+
+       
+        K-means clustering heuristic 
+       
+   6   
+   7   
+   8  option seed=101;
+   9   
+  10  sets
+  11     k  'clusters' /k1*k4/
+  12     i  'data points' /i1*i100/
+  13     ik(i,k) 'assignment of points to clusters'
+  14     xy 'coordinates of points' /x,y/
+  15  ;
+  16  parameter
+  17     m(k,xy) 'random clusters to generate data points'
+  18     p(i,*)  'data points'
+  19     numk    'number of clusters'
+  20     cluster(i)    'cluster number'
+  21  ;
+  22   
+  23  numk = card(k);
+  24  alias(ii,i);
+  25   
+  26  *------------------------------------------------
+  27  * generate random data
+  28  * points are around some clusters
+  29  *------------------------------------------------
+  30  m(k,xy) = uniform(0,4);
+  31  cluster(i) = uniformint(1,numk);
+  32  ik(i,k) = cluster(i)=ord(k);
+  33  p(i,xy) = sum(ik(i,k),m(k,xy)) + uniform(0,1);
+  34  display m,p;
+  35   
+  36  sets
+  37    ik(i,k) 'assignment of points to clusters'
+  38    ik_prev(i,k) 'previous assignment of points to clusters'
+  39    ik_diff
+  40    trial   'number of trials' /trial1*trial15/
+  41    iter    'max number of iterations' /iter1*iter20/
+  42  ;
+  43  parameters
+  44    n(k)       'number of points assigned to cluster'
+  45    c(k,xy)    'centroids'
+  46    notconverged  '0=converged,else not converged'
+  47    d(i,k)     'squared distance'
+  48    dclose(i)  'distance closest cluster'
+  49    trace(trial,iter) 'reporting'
+  50  ;
+  51   
+  52  loop(trial,
+  53   
+  54  *------------------------------------------------
+  55  * Step 1
+  56  * Random assignment
+  57  *------------------------------------------------
+  58   
+  59        cluster(i) = uniformint(1,numk);
+  60        ik(i,k) = cluster(i)=ord(k);
+  61   
+  62        notConverged = 1;
+  63        loop(iter$notConverged,
+  64   
+  65  *------------------------------------------------
+  66  * Step 2
+  67  * Calculate centroids
+  68  *------------------------------------------------
+  69            n(k) = sum(ik(i,k), 1);
+  70            c(k,xy)$n(k) = sum(ik(i,k), p(i,xy))/n(k);
+  71   
+  72  *------------------------------------------------
+  73  * Step 3
+  74  * Re-assign points
+  75  *------------------------------------------------
+  76   
+  77            ik_prev(i,k) = ik(i,k);
+  78            d(i,k) = sum(xy, sqr(p(i,xy)-c(k,xy)));
+  79            dclose(i) = smin(k, d(i,k));
+  80            ik(i,k) = yes$(dclose(i) = d(i,k));
+  81   
+  82  *------------------------------------------------
+  83  * Step 4
+  84  * Check convergence
+  85  *------------------------------------------------
+  86   
+  87            ik_diff(i,k) = ik(i,k) xor ik_prev(i,k);
+  88            notConverged = card(ik_diff);
+  89   
+  90            trace(trial,iter) = sum(ik(i,k),d(i,k));
+  91        );
+  92  );
+  93   
+  94  display trace;
+
+
+COMPILATION TIME     =        0.002 SECONDS      3 MB  25.1.1 r66732 DEX-DEG
+GAMS 25.1.1  r66732 Released May 19, 2018 DEX-DEG x86 64bit/Mac OS X - 06/10/18 13:33:43 Page 2
+G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
+E x e c u t i o n
+
+
+----     34 PARAMETER m  random clusters to generate data points
+
+             x           y
+
+k1       0.060       3.452
+k2       2.376       2.806
+k3       1.987       0.111
+k4       3.905       3.754
+
+
+----     34 PARAMETER p  data points
+
+               x           y
+
+i1         2.543       3.225
+i2         2.558       3.155
+i3         2.869       0.448
+i4         4.596       4.323
+i5         3.974       3.884
+i6         0.897       4.307
+i7         2.551       0.621
+i8         4.599       4.577
+i9         0.269       3.886
+i10        4.254       4.689
+i11        2.897       1.029
+i12        2.664       3.667
+i13        2.874       3.404
+i14        2.705       0.808
+i15        2.269       0.304
+i16        2.805       2.917
+i17        0.349       3.906
+i18        2.746       0.320
+i19        0.372       4.082
+i20        2.283       1.077
+i21        2.436       1.019
+i22        2.382       0.680
+i23        0.836       4.143
+i24        2.511       3.301
+i25        2.420       0.600
+i26        4.302       3.875
+i27        2.135       1.091
+i28        1.008       3.688
+i29        0.392       4.379
+i30        3.238       3.636
+i31        4.741       4.102
+i32        4.102       4.267
+i33        4.764       4.180
+i34        0.588       4.041
+i35        4.476       4.721
+i36        2.913       1.000
+i37        0.424       4.261
+i38        4.835       4.399
+i39        2.907       1.087
+i40        2.950       3.305
+i41        4.363       4.010
+i42        2.862       2.857
+i43        0.562       3.795
+i44        4.279       4.309
+i45        4.177       4.164
+i46        4.233       4.729
+i47        2.927       0.838
+i48        4.803       4.073
+i49        0.131       3.991
+i50        0.066       3.717
+i51        2.985       0.424
+i52        0.347       4.451
+i53        2.128       0.573
+i54        2.586       3.037
+i55        2.678       0.198
+i56        2.725       0.844
+i57        0.264       4.395
+i58        3.995       3.803
+i59        0.577       3.513
+i60        4.139       4.268
+i61        4.784       3.785
+i62        2.437       1.090
+i63        2.812       3.348
+i64        2.415       0.830
+i65        2.785       0.625
+i66        2.938       1.000
+i67        2.577       0.288
+i68        3.239       2.933
+i69        3.099       3.726
+i70        4.646       4.541
+i71        0.891       3.587
+i72        0.340       3.797
+i73        4.453       4.251
+i74        2.515       3.398
+i75        0.591       3.836
+i76        2.836       3.450
+i77        2.387       3.222
+i78        2.681       0.142
+i79        2.762       3.204
+i80        4.541       4.085
+i81        2.908       3.372
+i82        4.216       4.469
+i83        2.499       0.350
+i84        4.181       4.252
+i85        3.013       3.578
+i86        0.448       3.473
+i87        2.289       0.214
+i88        2.748       3.080
+i89        2.999       3.166
+i90        4.809       4.721
+i91        2.378       0.592
+i92        4.859       4.571
+i93        0.607       3.688
+i94        4.199       4.499
+i95        0.268       4.398
+i96        4.499       4.459
+i97        4.210       4.072
+i98        4.567       4.249
+i99        3.135       2.937
+i100       2.517       3.411
+
+
+----     94 PARAMETER trace  reporting
+
+              iter1       iter2       iter3       iter4       iter5       iter6       iter7       iter8       iter9      iter10
+
+trial1      366.178      28.135      14.566
+trial2      271.458      26.741      14.566
+trial3      316.975      23.912      14.566
+trial4      299.522      24.511      14.566
+trial5      346.148      77.747      14.566
+trial6      313.978      64.730      14.865      14.566
+trial7      310.735      27.412      14.566
+trial8      330.829     213.308     184.504     102.191      76.611      74.210      67.933      42.621      14.881      14.566
+trial9      356.897      90.286      16.112      14.566
+trial10     345.086      82.716      76.154      76.146
+trial11     354.545     169.648      75.626      74.350      71.929      67.385      59.815      59.591
+trial12     310.257      52.175      18.800      14.566
+trial13     289.293      23.505      14.566
+trial14     337.024      20.783      14.566
+trial15     336.969      28.747      14.566
+
+
+
+EXECUTION TIME       =        0.022 SECONDS      4 MB  25.1.1 r66732 DEX-DEG
+
+
+USER: GAMS Development Corporation, USA              G871201/0000CA-ANY
+      Free Demo, +1 202-342-0180, support@gams.com, www.gams.com DC0000
+
+
+**** FILE SUMMARY
+
+Input      /Users/natalijapuzanskaja/VU/Git/optim-methods-course-work/kmeans_gams.gms
+Output     /Users/natalijapuzanskaja/VU/Git/optim-methods-course-work/kmeans_gams.lst
